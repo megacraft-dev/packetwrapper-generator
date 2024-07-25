@@ -2,15 +2,12 @@ package lt.lukasa.packetwrapper.generator;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.AbstractStructure;
-import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.injector.packet.PacketRegistry;
 import com.comphenix.protocol.reflect.EquivalentConverter;
 import com.comphenix.protocol.reflect.FuzzyReflection;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.reflect.accessors.Accessors;
-import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.Converters;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
@@ -18,8 +15,6 @@ import com.hubspot.jinjava.Jinjava;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.annotation.Nullable;
-import javax.lang.model.type.ReferenceType;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -61,9 +56,7 @@ public class Main extends JavaPlugin {
                 context.put("IMPORTS", Collections.emptyList());
 
                 if (!processPacketType(type, context)) {
-                    System.out.println("Skipping " + type);
                     return;
-
                 }
 
                 String renderedTemplate = jinjava.render(template, context);
@@ -131,9 +124,6 @@ public class Main extends JavaPlugin {
 
         List<String> handles = new ArrayList<>();
         Class<?> clazz = optionalPacketClass.get();
-        if (clazz.equals(MinecraftReflection.getBundleDelimiterClass().get())) {
-            clazz = MinecraftReflection.getPackedBundlePacketClass().get();
-        }
         Map<String, Integer> fieldCounter = new HashMap<>();
         int globalNonPrimitiveFieldIndex = 0;
         for (Field field : FuzzyReflection.fromClass(clazz, true).getFields()) {
@@ -277,7 +267,7 @@ public class Main extends JavaPlugin {
         }
         List<MethodHandle> exactCandidates = new ArrayList<>();
         List<MethodHandle> candidates = new ArrayList<>();
-        PacketContainer dummy = new PacketContainer(PacketType.Play.Server.BUNDLE);
+        PacketContainer dummy = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
         Class<AbstractStructure> abstractStructureClass = AbstractStructure.class;
         for (Method method : FuzzyReflection.fromClass(abstractStructureClass, true).getMethods()) {
             if (method.getParameterTypes().length == 0

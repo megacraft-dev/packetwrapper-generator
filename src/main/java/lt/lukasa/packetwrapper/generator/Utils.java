@@ -9,7 +9,6 @@ import java.util.Queue;
  */
 public class Utils {
     public static String parseByteCodeType(String s) {
-        System.out.println("Parsing '" + s + "'");
         final LinkedList<Character> queue = new LinkedList<>();
         for (char c : s.toCharArray()) {
             queue.add(c);
@@ -19,7 +18,6 @@ public class Utils {
 
     private static String parseByteCodeType(Queue<Character> queue) {
         char first = queue.poll();
-        System.out.println(first);
         switch (Character.toUpperCase(first)) {
             case 'V':
                 return "void";
